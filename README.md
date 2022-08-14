@@ -1,1 +1,1 @@
-# whimsy-spec
+The Whimsy language specifications.
