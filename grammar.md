@@ -1,38 +1,81 @@
-Statements
+# Whimsy Grammar
+
+This is the complete grammar for Whimsy. A program consists of zero or more statements, followed by the end of the file. The format is a combination of EBNF and regular expressions, with `A?` indicating an optional `A`, `A*` is zero or more `A`s, and `A+` is one or more `A`s.
+
+## Statements
 ```
-program     = {stmt} EOF ;
+      statement -> const_decl | var_decl | assignment
+                 | block_stmt
+                 | expr_stmt
+                 | for_stmt
+                 | if_stmt
+                 | loop_stmt
+                 | return_stmt
+                 | empty_stmt
 
-stmt        = constDecl | varDecl
-            | exprStmt
-            | emptyStmt ;
+     const_decl -> (expression ".")? identifier "::" expression
+       var_decl -> (expression ".")? identifier ":=" expression
+     assignment -> (expression ".")? identifier ("=" | "+=" | "-=" | "*=" | "/=" | "%=") expression
 
-constDecl   = IDENTIFIER "::" expr ;
-varDecl     = IDENTIFIER ":=" expr ;
+loop_statements -> statement | break_stmt | continue_stmt
 
-exprStmt    = expr ;
+     block_stmt -> "do" statement* "/do"
+     break_stmt -> "break" expression
+  continue_stmt -> "continue" expression
+      expr_stmt -> expression
+       for_stmt -> "for" identifier "in" expression loop_statements* "/for"
+        if_stmt -> "if" expression "then"? statement*
+                   ("elif" expression "then"? statement*)*
+                   ("else" statement*)
+                   "/if"
+      loop_stmt -> "loop" loop_statements* "/loop"
+    return_stmt -> "return" expression
 
-emptyStmt   = ";" ;
+     empty_stmt -> ";"
 ```
 
-Expressions
+## Expressions
 ```
-expr        = equality ;
-equality    = comparison { ( "==" | "!=" ) comparison } ;
-comparison  = term { ( "<" | "<=" | ">" | ">=" ) term } ;
-term        = factor { ( "+" | "-" ) factor } ;
-factor      = unary { ( "*" | "/" | "%" ) unary } ;
-unary       = ( "-" | "!" ) unary
-            | primary ;
-primary     = "true" | "false" | "nil"
-            | NUMBER | STRING | IDENTIFIER
-            | "(" expr ")"
-            | class
-            | function ;
+     expression -> logic_or
 
-class       = "class" [ "is" IDENTIFIER ]
-              {stmt}
-              "/class" ;
-function    = "fn" "(" [ IDENTIFIER { "," IDENTIFIER } ] ")"
-              {stmt}
-              "/fn" ;
+       logic_or -> logic_and ("or" logic_and)*
+      logic_and -> equality ("and" equality)*
+       equality -> comparison (("==" | "!=") comparison)*
+     comparison -> term (("<" | "<=" | ">" | ">=") term)*
+           term -> factor (("+" | "-") factor)*
+         factor -> unary (("*" | "/" | "%") unary)*
+
+          unary -> ("!" | "-") unary | call
+           call -> primary ("(" arguments? ")" | "." identifier)*
+        primary -> "true" | "false" | "nil"
+                 | number | string | identifier
+                 | "(" expression ")"
+                 | class
+                 | function
+
+          class -> "class" ("is" identifier)? statement* "/class"
+       function -> "fn" "(" parameters? ")" statement* "/fn"
+```
+
+## Helpers
+```
+     parameters -> identifier ("," identifier)* ","?
+      arguments -> expression ("," expression)* ","?
+```
+
+## Lexical Grammar
+```
+          alpha -> "a"..."z" | "A"..."Z" | "_"
+         binary -> "0" | "1" | "_"
+          octal -> "0"..."7" | "_"
+        decimal -> "0"..."9" | "_"
+    hexadecimal -> "0"..."9" | "a"..."f" | "A"..."F" | "_"
+
+         number -> ("0b" | "0B") binary+
+                 | ("0o" | "0O") octal+
+                 | decimal+ ("." decimal+)?
+                 | ("0x" | "0X") hexadecimal+
+         string -> '"' (<not '"'> | '\"')* '"'
+                 | "'" (<not "'"> | "\'")* "'"
+     identifier -> alpha (alpha | decimal)*
 ```
