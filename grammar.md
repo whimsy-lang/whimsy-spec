@@ -52,9 +52,11 @@ loop_statements -> statement | break_stmt | continue_stmt
                  | "(" expression ")"
                  | class
                  | function
+                 | list
 
           class -> "class" ("is" identifier)? statement* "/class"
        function -> "fn" "(" parameters? ")" statement* "/fn"
+           list -> "(" ((expression ",") | (expression ("," expression)+ ","?))? ")"
 ```
 
 ## Helpers
