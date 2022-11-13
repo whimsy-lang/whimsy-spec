@@ -46,7 +46,7 @@ loop_statements -> statement | break_stmt | continue_stmt
          factor -> unary (("*" | "/" | "%") unary)*
 
           unary -> ("!" | "-") unary | call
-           call -> primary ("(" arguments? ")" | "." identifier)*
+           call -> primary ("(" arguments? ")" | "." identifier | "[" expression "]")*
         primary -> "true" | "false" | "nil"
                  | number | string | identifier
                  | "(" expression ")"
