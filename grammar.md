@@ -56,9 +56,14 @@ loop_statements -> statement | break_stmt | continue_stmt
         primary -> "true" | "false" | "nil"
                  | number | string | identifier
                  | "(" expression ")"
+                 | if_expr
                  | class
                  | function
                  | list
+
+        if_expr -> "if" expression "then"? expression
+                   ("elif" expression "then"? expression)*
+                   "else" expression
 
           class -> "class" ("is" identifier)? statement* "/class"
        function -> "fn" "(" parameters? ")" statement* "/fn"
