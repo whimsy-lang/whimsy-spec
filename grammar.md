@@ -48,8 +48,8 @@ loop_statements -> statement | break_stmt | continue_stmt
           unary -> ("!" | "-") unary | call
            call -> primary (
                              "(" arguments? ")"
-                             | "." identifier
-                             | ":" identifier "(" arguments? ")"
+                             | "." (identifier | string)
+                             | ":" (identifier | string) "(" arguments? ")"
                              | "[" expression "]"
                            )*
         primary -> "true" | "false" | "nil"
@@ -78,10 +78,10 @@ loop_statements -> statement | break_stmt | continue_stmt
         decimal -> "0"..."9" | "_"
     hexadecimal -> "0"..."9" | "a"..."f" | "A"..."F" | "_"
 
-         number -> ("0b" | "0B") binary+
-                 | ("0o" | "0O") octal+
+         number -> ("0b" | "0B") binary+ ("." binary+)?
+                 | ("0o" | "0O") octal+ ("." octal+)?
                  | decimal+ ("." decimal+)?
-                 | ("0x" | "0X") hexadecimal+
+                 | ("0x" | "0X") hexadecimal+ ("." hexadecimal+)?
          string -> '"' (<not '"'> | '\"')* '"'
                  | "'" (<not "'"> | "\'")* "'"
      identifier -> alpha (alpha | decimal)*
