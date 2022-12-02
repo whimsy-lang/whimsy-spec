@@ -41,7 +41,8 @@ loop_statements -> statement | break_stmt | continue_stmt
        logic_or -> logic_and ("or" logic_and)*
       logic_and -> equality ("and" equality)*
        equality -> comparison (("==" | "!=") comparison)*
-     comparison -> term (("<" | "<=" | ">" | ">=" | "is") term)*
+     comparison -> range (("<" | "<=" | ">" | ">=" | "is") range)*
+          range -> term ((".." | "..=") term)*
            term -> factor (("+" | "-") factor)*
          factor -> unary (("*" | "/" | "%") unary)*
 
@@ -55,9 +56,14 @@ loop_statements -> statement | break_stmt | continue_stmt
         primary -> "true" | "false" | "nil"
                  | number | string | identifier
                  | "(" expression ")"
+                 | if_expr
                  | class
                  | function
                  | list
+
+        if_expr -> "if" expression "then"? expression
+                   ("elif" expression "then"? expression)*
+                   "else" expression
 
           class -> "class" ("is" identifier)? statement* "/class"
        function -> "fn" "(" parameters? ")" statement* "/fn"
