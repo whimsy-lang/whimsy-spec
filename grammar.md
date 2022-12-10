@@ -42,7 +42,7 @@ loop_statements -> statement | break_stmt | continue_stmt
       logic_and -> equality ("and" equality)*
        equality -> comparison (("==" | "!=") comparison)*
      comparison -> range (("<" | "<=" | ">" | ">=" | "is") range)*
-          range -> term ((".." | "..=") term)*
+          range -> term ((".." | "..=") term ("by" expression)?)*
            term -> factor (("+" | "-") factor)*
          factor -> unary (("*" | "/" | "%") unary)*
 
@@ -60,6 +60,8 @@ loop_statements -> statement | break_stmt | continue_stmt
                  | class
                  | function
                  | list
+                 | map
+                 | set
 
         if_expr -> "if" expression "then"? expression
                    ("elif" expression "then"? expression)*
@@ -68,6 +70,8 @@ loop_statements -> statement | break_stmt | continue_stmt
           class -> "class" ("is" identifier)? statement* "/class"
        function -> "fn" "(" parameters? ")" statement* "/fn"
            list -> "(" ((expression ",") | (expression ("," expression)+ ","?))? ")"
+            map -> "[" (expression ("::" | ":=") expression ("," expression ("::" | ":=") expression)* ","?)? "]"
+            set -> "[" expression ("," expression)* ","? "]"
 ```
 
 ## Helpers
