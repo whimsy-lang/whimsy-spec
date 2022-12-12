@@ -24,8 +24,8 @@ loop_statements -> statement | break_stmt | continue_stmt
   continue_stmt -> "continue" expression
       expr_stmt -> expression
        for_stmt -> "for" identifier "in" expression loop_statements* "/for"
-        if_stmt -> "if" expression "then"? statement*
-                   ("elif" expression "then"? statement*)*
+        if_stmt -> "if" expression statement*
+                   ("elif" expression statement*)*
                    ("else" statement*)
                    "/if"
       loop_stmt -> "loop" loop_statements* "/loop"
@@ -63,8 +63,8 @@ loop_statements -> statement | break_stmt | continue_stmt
                  | map
                  | set
 
-        if_expr -> "if" expression "then"? expression
-                   ("elif" expression "then"? expression)*
+        if_expr -> "if" expression ";"? expression
+                   ("elif" expression ";"? expression)*
                    "else" expression
 
           class -> "class" ("is" identifier)? statement* "/class"
