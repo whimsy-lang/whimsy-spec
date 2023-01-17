@@ -44,11 +44,12 @@ loop_statements -> statement | break_stmt | continue_stmt
      comparison -> range (("<" | "<=" | ">" | ">=" | "is") range)*
           range -> term ((".." | "..=") term ("by" expression)?)*
            term -> factor (("+" | "-") factor)*
-         factor -> unary (("*" | "/" | "%") unary)*
+         factor -> custom (("*" | "/" | "%") custom)*
+         custom -> unary (custom_op unary)*
 
           unary -> ("!" | "-") unary | call
            call -> primary (
-                             "(" arguments? ")"
+                               "(" arguments? ")"
                              | "." (identifier | string)
                              | ":" (identifier | string) "(" arguments? ")"
                              | "[" expression "]"
@@ -57,17 +58,14 @@ loop_statements -> statement | break_stmt | continue_stmt
                  | number | string | identifier
                  | "(" expression ")"
                  | if_expr
-                 | class
-                 | function
-                 | list
-                 | map
-                 | set
+                 | class | function
+                 | list | map | set
 
         if_expr -> "if" expression ";"? expression
                    ("elif" expression ";"? expression)*
                    "else" expression
 
-          class -> "class" ("is" identifier)? statement* "/class"
+          class -> "class" ("is" expression)? statement* "/class"
        function -> "fn" "(" parameters? ")" statement* "/fn"
            list -> "(" ((expression ",") | (expression ("," expression)+ ","?))? ")"
             map -> "[" (expression ("::" | ":=") expression ("," expression ("::" | ":=") expression)* ","?)? "]"
@@ -87,6 +85,12 @@ loop_statements -> statement | break_stmt | continue_stmt
           octal -> "0"..."7" | "_"
         decimal -> "0"..."9" | "_"
     hexadecimal -> "0"..."9" | "a"..."f" | "A"..."F" | "_"
+
+      custom_op -> (
+                       "~" | "!" | "@" | "$" | "%" | "^" | "&" | "*" | "-" | "+" | "="
+                     | "{" | "}" | "\" | "|" | ";" | ":" | "<" | ">" | "." | "?" | "/"
+                   )+
+                 | "`" identifier
 
          number -> ("0b" | "0B") binary+ ("." binary+)?
                  | ("0o" | "0O") octal+ ("." octal+)?
